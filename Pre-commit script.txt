@@ -1,0 +1,21 @@
+#!/bin/bash
+
+# Path to the PowerShell script file
+script_path="C:\Users\aindi\source\repos\ConsoleApp1\pre-commit.ps1"
+
+# Run the PowerShell script using powershell.exe
+powershell.exe -ExecutionPolicy Bypass -File "$script_path"
+
+# Check for analysis errors
+#if [ $? -ne 0 ]; then
+#    echo "SonarQube analysis failed. Please fix the issues before committing."
+#    exit 1
+#fi
+
+# Check if issues are present in the analysis results
+if jq -e '.runs[0].results | length == 0' 'C:\Users\aindi\source\repos\ConsoleApp1\.sonarqube\out\0\Issues.json' >/dev/null; then
+    echo "No issues found in SonarQube analysis."
+else
+    echo "Issues found in SonarQube analysis. Please fix them before committing."
+    exit 1
+fi
